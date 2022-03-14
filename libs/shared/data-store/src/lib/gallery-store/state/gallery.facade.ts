@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { select, Store, Action } from '@ngrx/store';
+import { map } from 'rxjs';
 
 import * as GalleryActions from './gallery.actions';
 import * as GalleryFeature from './gallery.reducer';
@@ -14,6 +15,7 @@ export class GalleryFacade {
   loaded$ = this.store.pipe(select(GallerySelectors.getGalleryLoaded));
   allGallery$ = this.store.pipe(select(GallerySelectors.getAllGallery));
   selectedGallery$ = this.store.pipe(select(GallerySelectors.getSelected));
+  selectedCats$ = this.store.pipe(select(GallerySelectors.getSelectedCats));
 
   constructor(private readonly store: Store) {}
 
@@ -24,4 +26,13 @@ export class GalleryFacade {
   init() {
     this.store.dispatch(GalleryActions.init());
   }
+
+  isCatSelected(catId: any) {
+    return this.selectedCats$.pipe(
+      map((selectedCats: any) => selectedCats.has(catId))
+    );
+  }
+  toogleSelectedCat = (cat: any) => {
+    this.store.dispatch(GalleryActions.toggleSelectCat(cat));
+  };
 }
